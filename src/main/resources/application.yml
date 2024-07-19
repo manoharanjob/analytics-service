@@ -1,0 +1,23 @@
+server:
+  servlet:
+    context-path: /blockstats/aggregator
+
+#Spring configurations
+spring:
+  jackson:
+    default-property-inclusion: NON_NULL
+#MongoDB Configuration
+  data:
+    mongodb:
+      host: SG-blockstats-60239.servers.mongodirector.com
+      port: 27017
+      userName: blockstats
+      password: Qazwsxedcrfv1234
+      database: blockstats
+      
+# APP Configurations
+aggregator:
+  app:
+    allowed-cross-origin-mapping=/v1/**
+    allowed-cross-origins=http://localhost:4545,http://blockstatsui.s3-website-us-west-1.amazonaws.com,https://frontend-web-uw6myk4s3a-uc.a.run.app,https://beta.blockstats.app
+
