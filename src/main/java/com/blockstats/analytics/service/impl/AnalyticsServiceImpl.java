@@ -17,6 +17,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import com.blockstats.analytics.dto.UserAssetDto;
+import com.blockstats.analytics.dto.UserSummaryDto;
+import com.blockstats.analytics.repository.AccountRepository;
 import com.blockstats.analytics.service.AnalyticsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +32,12 @@ import lombok.extern.slf4j.Slf4j;
 public class AnalyticsServiceImpl implements AnalyticsService {
 
 	private MongoTemplate mongoTemplate;
+	private AccountRepository accountRepository;
 
-	public AnalyticsServiceImpl(MongoTemplate mongoTemplate) {
+	public AnalyticsServiceImpl(MongoTemplate mongoTemplate,
+			AccountRepository accountRepository) {
 		this.mongoTemplate = mongoTemplate;
+		this.accountRepository = accountRepository;
 	}
 
 	public List<UserAssetDto> fetchUserAssetsByUserId(String userId) {
@@ -64,6 +69,11 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 			asset.setAssetPercentage(percentage);
 			return asset;
 		}).sorted(Comparator.comparingDouble(UserAssetDto::getAssetPercentage).reversed()).toList();
+	}
+	
+	public List<UserSummaryDto> fetchUserSummaryByUserId(String userId) {
+		List<UserSummaryDto> userSummary = accountRepository.fetchUserSummaryByUserId(userId);
+		return userSummary;
 	}
 
 }

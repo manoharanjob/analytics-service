@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blockstats.analytics.dto.UserAssetDto;
+import com.blockstats.analytics.dto.UserSummaryDto;
 import com.blockstats.analytics.service.AnalyticsService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +39,17 @@ public class AnalyticsController {
 	@Operation(summary = "Fetch user assets value", description = "Calculate user assets value and return")
 	public ResponseEntity<List<UserAssetDto>> fetchUserAssetsByUserId(@RequestParam("userId") String userId) {
 		return ResponseEntity.ok(analyticsService.fetchUserAssetsByUserId(userId));
+	}
+	
+	/**
+	 * This API fetch user summary
+	 * 
+	 * @return List of {@link UserSummaryDto}
+	 */
+	@GetMapping("/summary")
+	@Operation(summary = "Fetch user assets value", description = "Fetch user summary value and return")
+	public ResponseEntity<List<UserSummaryDto>> fetchUserSummaryByUserId(@RequestParam("userId") String userId) {
+		return ResponseEntity.ok(analyticsService.fetchUserSummaryByUserId(userId));
 	}
 
 }
