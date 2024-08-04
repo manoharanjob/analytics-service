@@ -22,5 +22,6 @@ public class Coin {
 	private Double priceChangePercent24h;
 	private LocalDateTime persistedAt;
 	private String priceCurrency;
+	private String logoResourceUrl;
 	
 }

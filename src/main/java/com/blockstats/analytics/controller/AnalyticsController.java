@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.blockstats.analytics.dto.Coin24HourChangeDto;
 import com.blockstats.analytics.dto.UserAssetDto;
 import com.blockstats.analytics.dto.UserSummaryDto;
 import com.blockstats.analytics.service.AnalyticsService;
@@ -50,6 +51,17 @@ public class AnalyticsController {
 	@Operation(summary = "Fetch user assets value", description = "Fetch user summary value and return")
 	public ResponseEntity<List<UserSummaryDto>> fetchUserSummaryByUserId(@RequestParam("userId") String userId) {
 		return ResponseEntity.ok(analyticsService.fetchUserSummaryByUserId(userId));
+	}
+	
+	/**
+	 * This API fetch user holding coins last 24 hour change in price
+	 * 
+	 * @return List of {@link Coin24HourChangeDto}
+	 */
+	@GetMapping("/24hour-change")
+	@Operation(summary = "Fetch user holding coins last 24 hour change in price", description = "Fetch user holding coins last 24 hour change in price and return")
+	public ResponseEntity<List<Coin24HourChangeDto>> fetchUserCoin24HourChangeByUserId(@RequestParam("userId") String userId) {
+		return ResponseEntity.ok(analyticsService.fetchUserCoin24HourChangeByUserId(userId));
 	}
 
 }

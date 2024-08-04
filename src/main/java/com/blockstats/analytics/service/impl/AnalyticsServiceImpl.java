@@ -1,8 +1,11 @@
 package com.blockstats.analytics.service.impl;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
@@ -16,10 +19,14 @@ import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
+import com.blockstats.analytics.dto.Coin24HourChangeDto;
 import com.blockstats.analytics.dto.UserAssetDto;
 import com.blockstats.analytics.dto.UserSummaryDto;
+import com.blockstats.analytics.entity.Account;
+import com.blockstats.analytics.entity.Coin;
 import com.blockstats.analytics.repository.AccountRepository;
 import com.blockstats.analytics.service.AnalyticsService;
+import com.blockstats.analytics.service.CoinService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,11 +40,14 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
 	private MongoTemplate mongoTemplate;
 	private AccountRepository accountRepository;
+	private CoinService coinService;
 
 	public AnalyticsServiceImpl(MongoTemplate mongoTemplate,
-			AccountRepository accountRepository) {
+			AccountRepository accountRepository,
+			CoinService coinService) {
 		this.mongoTemplate = mongoTemplate;
 		this.accountRepository = accountRepository;
+		this.coinService = coinService;
 	}
 
 	public List<UserAssetDto> fetchUserAssetsByUserId(String userId) {
@@ -74,6 +84,25 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 	public List<UserSummaryDto> fetchUserSummaryByUserId(String userId) {
 		List<UserSummaryDto> userSummary = accountRepository.fetchUserSummaryByUserId(userId);
 		return userSummary;
+	}
+	
+	public List<Coin24HourChangeDto> fetchUserCoin24HourChangeByUserId(String userId) {
+		List<String> coins = mongoTemplate.query(Account.class)
+                .distinct("name")
+                .as(String.class)           
+                .all();
+		return coins.stream()
+				.map(name -> {
+					Coin coin = coinService.findBySymbol(name);
+					Coin24HourChangeDto coinChange = new Coin24HourChangeDto();
+					coinChange.setName(name);
+					if(Objects.nonNull(coin)) {
+						coinChange.setCoinImgUrl(coin.getLogoResourceUrl());
+						coinChange.setCoin24HrChange(coin.getPriceChangePercent24h());
+					}
+					return coinChange;
+				})
+				.collect(Collectors.toList());
 	}
 
 }
